@@ -17,28 +17,80 @@ class BinaryTree {
    * the length of the shortest path from the root to a leaf. */
 
   minDepth() {
+    if (!this.root) return 0;
 
+    function minDepthHelper(node) {
+      if (node.left === null && node.right === null) return 1;
+      if (node.left === null) return minDepthHelper(node.right) + 1;
+      if (node.right === null) return minDepthHelper(node.left) + 1;
+      return (
+        Math.min(minDepthHelper(node.left), minDepthHelper(node.right)) + 1
+      );
+    }
+
+    return minDepthHelper(this.root);
   }
 
   /** maxDepth(): return the maximum depth of the tree -- that is,
    * the length of the longest path from the root to a leaf. */
 
   maxDepth() {
+    if(this.root === null) return 0;
 
+    function maxDepthHelper(node) {
+      if(node.left === null && node.right === null) return 1;
+      if (node.left === null) return maxDepthHelper(node.right) + 1;
+      if (node.right === null) return maxDepthHelper(node.left) + 1;
+      
+      return (
+        Math.max(maxDepthHelper(node.left), maxDepthHelper(node.right)) + 1
+      );
+    }
+
+    return maxDepthHelper(this.root);
+    
   }
 
   /** maxSum(): return the maximum sum you can obtain by traveling along a path in the tree.
    * The path doesn't need to start at the root, but you can't visit a node more than once. */
 
   maxSum() {
+    let result = 0;
 
+    function maxSumHelper(node) {
+      if (node === null) return 0;
+      const leftSum = maxSumHelper(node.left);
+      const rightSum = maxSumHelper(node.right);
+      result = Math.max(result, node.val + leftSum + rightSum);
+      return Math.max(0, leftSum + node.val, rightSum + node.val);
+    }
+
+    maxSumHelper(this.root);
+    return result;
   }
 
   /** nextLarger(lowerBound): return the smallest value in the tree
    * which is larger than lowerBound. Return null if no such value exists. */
 
   nextLarger(lowerBound) {
+    let queueOrder = [this.root];
+    let lowestNum = null;
 
+    if(this.root === null) return null;
+
+    while(queueOrder.length){
+      let currNode = queueOrder.shift();
+      if(lowestNum !== null && currNode.val > lowerBound && currNode.val < lowestNum){
+        lowestNum = currNode.val;
+      }
+      else if(currNode.val > lowerBound){
+        lowestNum = currNode.val;
+      }
+
+      if(currNode.left !== null) queueOrder.push(currNode.left);
+      if(currNode.right !== null) queueOrder.push(currNode.right);
+    }
+    return lowestNum;
   }
 
   /** Further study!
